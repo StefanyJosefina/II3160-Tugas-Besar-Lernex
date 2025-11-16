@@ -1,15 +1,15 @@
-# 🚀 API Lernex (FastAPI)
+# API Lernex (FastAPI)
 
 API backend untuk platform Digital Learning Marketplace, Lernex.
 
-## 🛠️ Stack Teknologi
+## Stack Teknologi
 * Python
 * FastAPI
 * Pydantic
 
 ---
 
-## ⚙️ Menjalankan Aplikasi
+## Menjalankan Aplikasi
 
 1.  **Install dependencies** yang diperlukan:
     ```bash
