@@ -7,9 +7,8 @@ from jose import JWTError, jwt
 from pydantic import BaseModel
 
 from ..domain.user import Learner
-from .learner_router import _learners  # in-memory "database" learner
+from .learner_router import _learners 
 
-# Sederhana, untuk tugas. Di real app sebaiknya pakai environment variable
 SECRET_KEY = "ganti_ini_dengan_secret_yang_lebih_sulit"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
