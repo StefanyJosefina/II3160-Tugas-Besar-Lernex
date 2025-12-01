@@ -1,8 +1,10 @@
 from typing import Dict, List
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 from ..domain.enrollment import Enrollment
+from ..domain.user import Learner
+from .auth_router import get_current_learner   
 
 router = APIRouter(prefix="/enrollments", tags=["Enrollments"])
 
@@ -10,7 +12,10 @@ _enrollments: Dict[str, Enrollment] = {}
 
 
 @router.post("/", response_model=Enrollment)
-def create_enrollment(enrollment: Enrollment) -> Enrollment:
+def create_enrollment(
+    enrollment: Enrollment,
+    current_learner: Learner = Depends(get_current_learner)  
+) -> Enrollment:
     if enrollment.enrollment_id in _enrollments:
         raise HTTPException(status_code=400, detail="Enrollment already exists")
     _enrollments[enrollment.enrollment_id] = enrollment
@@ -18,12 +23,17 @@ def create_enrollment(enrollment: Enrollment) -> Enrollment:
 
 
 @router.get("/", response_model=List[Enrollment])
-def list_enrollments() -> List[Enrollment]:
+def list_enrollments(
+    current_learner: Learner = Depends(get_current_learner)  
+) -> List[Enrollment]:
     return list(_enrollments.values())
 
 
 @router.get("/{enrollment_id}", response_model=Enrollment)
-def get_enrollment(enrollment_id: str) -> Enrollment:
+def get_enrollment(
+    enrollment_id: str,
+    current_learner: Learner = Depends(get_current_learner)   
+) -> Enrollment:
     enrollment = _enrollments.get(enrollment_id)
     if not enrollment:
         raise HTTPException(status_code=404, detail="Enrollment not found")

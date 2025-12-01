@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from .api.auth_router import router as auth_router               
 from .api.learner_router import router as learner_router
 from .api.course_router import router as course_router
 from .api.enrollment_router import router as enrollment_router
@@ -14,6 +15,7 @@ app = FastAPI(
     version="0.1.0",
 )
 
+app.include_router(auth_router)                                  
 app.include_router(learner_router)
 app.include_router(course_router)
 app.include_router(enrollment_router)
