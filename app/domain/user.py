@@ -25,6 +25,18 @@ class Learner(BaseModel):
     learner_id: str = Field(default_factory=lambda: str(uuid4()))
     name: str
     email: EmailStr
-    password: str 
+    password_hash: str 
     join_date: datetime = Field(default_factory=datetime.utcnow)
     profile: Optional[Profile] = None
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "learner_id": "123e4567-e89b-12d3-a456-426614174000",
+                "name": "John Doe",
+                "email": "john@example.com",
+                "password_hash": "hashed_password_here",
+                "join_date": "2024-01-01T00:00:00",
+                "profile": None
+            }
+        }
