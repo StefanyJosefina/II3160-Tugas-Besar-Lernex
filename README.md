@@ -110,30 +110,30 @@ pytest tests/ -v --cov=app --cov-report=term-missing
 lernex-api/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml              # CI/CD pipeline configuration
+│       └── ci.yml              
 ├── app/
 │   ├── api/
-│   │   ├── auth_router.py      # Authentication endpoints
-│   │   ├── course_router.py    # Course management endpoints
+│   │   ├── auth_router.py     
+│   │   ├── course_router.py    
 │   │   ├── enrollment_router.py
 │   │   ├── feedback_router.py
 │   │   ├── progress_router.py
 │   │   └── recommendation_router.py
 │   ├── domain/
-│   │   ├── course.py           # Course domain models
-│   │   ├── user.py             # User domain models
+│   │   ├── course.py          
+│   │   ├── user.py             
 │   │   ├── enrollment.py
 │   │   ├── feedback.py
 │   │   └── progress.py
-│   ├── main.py                 # FastAPI application entry point
-│   └── storage.py              # In-memory data storage
+│   ├── main.py                 
+│   └── storage.py            
 ├── tests/
 │   ├── test_auth.py
 │   ├── test_courses.py
 │   └── ...
-├── Dockerfile                   # Docker configuration
-├── requirements.txt             # Python dependencies
-└── README.md                    # Project documentation
+├── Dockerfile                  
+├── requirements.txt            
+└── README.md                    
 ```
 
 ---
