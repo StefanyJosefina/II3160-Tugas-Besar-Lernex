@@ -1,5 +1,5 @@
 from typing import Optional, List
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
@@ -12,7 +12,7 @@ class CourseTopic(BaseModel):
     order: int
     estimated_duration_minutes: Optional[int] = None
     content_url: Optional[str] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class CourseLesson(BaseModel):
@@ -22,7 +22,7 @@ class CourseLesson(BaseModel):
     order: int
     topics: List[CourseTopic] = Field(default_factory=list)
     estimated_duration_minutes: Optional[int] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class CourseModule(BaseModel):
@@ -32,7 +32,7 @@ class CourseModule(BaseModel):
     order: int
     lessons: List[CourseLesson] = Field(default_factory=list)
     estimated_duration_minutes: Optional[int] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class CourseDetail(BaseModel):
@@ -57,5 +57,5 @@ class Course(BaseModel):
     instructor_id: str
     modules: List[CourseModule] = Field(default_factory=list)
     detail: Optional[CourseDetail] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

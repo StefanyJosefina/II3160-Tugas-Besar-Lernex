@@ -1,4 +1,5 @@
 from typing import Dict, List
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException, Depends, status
 from pydantic import BaseModel
@@ -47,7 +48,6 @@ router = APIRouter(prefix="/courses", tags=["Courses"])
 def list_courses(
     current_learner: Learner = Depends(get_current_learner)
 ) -> List[CourseListResponse]:
-    """List all available courses for learner to explore and enroll"""
     courses = []
     for course in _courses.values():
         instructor = _instructors.get(course.instructor_id, {})
@@ -69,7 +69,6 @@ def list_courses(
 def get_my_courses(
     current_learner: Learner = Depends(get_current_learner)
 ) -> List[EnrolledCourseResponse]:
-    """Get all courses that learner has enrolled in"""
     my_courses = []
     
     for enrollment in _enrollments.values():
@@ -101,7 +100,6 @@ def get_course_detail(
     course_id: str,
     current_learner: Learner = Depends(get_current_learner)
 ) -> Course:
-    """Get detailed course structure including all modules, lessons, and topics"""
     course = _courses.get(course_id)
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
@@ -113,7 +111,6 @@ def enroll_course(
     course_id: str,
     current_learner: Learner = Depends(get_current_learner)
 ) -> EnrollResponse:
-    """Enroll learner to a course"""
     course = _courses.get(course_id)
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
@@ -126,7 +123,7 @@ def enroll_course(
         "enrollment_id": enrollment_id,
         "learner_id": current_learner.learner_id,
         "course_id": course_id,
-        "enrolled_at": str(__import__('datetime').datetime.utcnow())
+        "enrolled_at": str(datetime.now(timezone.utc))
     }
     
     return EnrollResponse(

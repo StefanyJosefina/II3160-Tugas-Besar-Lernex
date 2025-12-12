@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from uuid import uuid4
 
@@ -16,5 +16,5 @@ class LearningProgress(BaseModel):
     learner_id: str
     course_id: str
     completion_rate: float = 0.0 
-    last_accessed: datetime = Field(default_factory=datetime.utcnow)
+    last_accessed: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     status: ProgressStatus = ProgressStatus.IN_PROGRESS

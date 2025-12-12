@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -82,7 +82,7 @@ def create_access_token(
     expires_delta: Optional[timedelta] = None,
 ) -> str:
     to_encode = data.copy()
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     expire = now + (
         expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )

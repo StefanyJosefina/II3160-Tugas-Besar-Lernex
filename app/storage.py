@@ -1,5 +1,5 @@
 from typing import Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from .domain.course import Course, CourseModule, CourseLesson, CourseTopic, CourseDetail
 
 _learners: Dict[str, Any] = {}
@@ -16,8 +16,8 @@ _courses: Dict[str, Any] = {
         title="Python Fundamentals",
         description="Learn Python basics from scratch",
         instructor_id="instr-001",
-        created_at=datetime.utcnow(),
-        updated_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
+        updated_at=datetime.now(timezone.utc),
         modules=[
             CourseModule(
                 module_id="mod-001",
@@ -61,8 +61,8 @@ _courses: Dict[str, Any] = {
         title="Web Development with FastAPI",
         description="Build modern APIs with FastAPI",
         instructor_id="instr-002",
-        created_at=datetime.utcnow(),
-        updated_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
+        updated_at=datetime.now(timezone.utc),
         modules=[
             CourseModule(
                 module_id="mod-002",
@@ -98,8 +98,8 @@ _courses: Dict[str, Any] = {
         title="Data Science Basics",
         description="Introduction to data science and analytics",
         instructor_id="instr-003",
-        created_at=datetime.utcnow(),
-        updated_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
+        updated_at=datetime.now(timezone.utc),
         modules=[
             CourseModule(
                 module_id="mod-003",

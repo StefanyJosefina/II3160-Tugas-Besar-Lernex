@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from uuid import uuid4
 
@@ -15,5 +15,5 @@ class Enrollment(BaseModel):
     enrollment_id: str = Field(default_factory=lambda: str(uuid4()))
     learner_id: str
     course_id: str
-    enrollment_date: datetime = Field(default_factory=datetime.utcnow)
+    enrollment_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     status: EnrollmentStatus = EnrollmentStatus.ACTIVE

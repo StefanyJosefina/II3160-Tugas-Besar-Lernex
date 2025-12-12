@@ -1,8 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional
+from uuid import uuid4
 
 from pydantic import BaseModel, EmailStr, Field
-from uuid import uuid4
 
 
 class PreferenceProfile(BaseModel):
@@ -26,5 +26,5 @@ class Learner(BaseModel):
     name: str
     email: EmailStr
     password_hash: str 
-    join_date: datetime = Field(default_factory=datetime.utcnow)
+    join_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     profile: Optional[Profile] = None
