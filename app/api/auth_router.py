@@ -2,15 +2,15 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 import os
 
 from ..domain.user import Learner
-from .learner_router import _learners 
+from ..storage import _learners 
 
 load_dotenv()
 
@@ -20,7 +20,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+security = HTTPBearer()
 
 
 class Token(BaseModel):
@@ -38,6 +38,32 @@ class TokenPayload(BaseModel):
     email: str
     iat: datetime
     exp: datetime
+
+
+class LearnerRegister(BaseModel):
+    name: str
+    email: EmailStr
+    password: str
+
+
+class LearnerRegisterResponse(BaseModel):
+    learner_id: str
+    name: str
+    email: str
+    message: str
+
+
+class LearnerLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str
+    learner_id: str
+    name: str
+    email: str
 
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -78,27 +104,54 @@ def authenticate_learner(email: str, password: str) -> Optional[Learner]:
     return None
 
 
-@router.post("/token", response_model=Token)
-def login_for_access_token(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-):
-    learner = authenticate_learner(form_data.username, form_data.password)
+@router.post("/register", response_model=LearnerRegisterResponse)
+def register_learner(learner_data: LearnerRegister):
+    for learner in _learners.values():
+        if learner.email == learner_data.email:
+            raise HTTPException(status_code=400, detail="Email already registered")
+    
+    password_hash = get_password_hash(learner_data.password)
+    
+    new_learner = Learner(
+        name=learner_data.name,
+        email=learner_data.email,
+        password_hash=password_hash
+    )
+    
+    _learners[new_learner.learner_id] = new_learner
+    
+    return {
+        "learner_id": new_learner.learner_id,
+        "name": new_learner.name,
+        "email": new_learner.email,
+        "message": "Learner registered successfully. You can now login."
+    }
+
+
+@router.post("/login", response_model=LoginResponse)
+def login(login_data: LearnerLogin):
+    learner = authenticate_learner(login_data.email, login_data.password)
     if not learner:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Bearer"},
+            detail="Incorrect email or password"
         )
 
     access_token = create_access_token({
         "sub": learner.learner_id,
         "email": learner.email,
     })
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "learner_id": learner.learner_id,
+        "name": learner.name,
+        "email": learner.email,
+    }
 
 
 async def get_current_learner(
-    token: str = Depends(oauth2_scheme),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> Learner:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -108,7 +161,7 @@ async def get_current_learner(
 
     try:
         payload = jwt.decode(
-            token, 
+            credentials.credentials, 
             SECRET_KEY, 
             algorithms=[ALGORITHM]
         )

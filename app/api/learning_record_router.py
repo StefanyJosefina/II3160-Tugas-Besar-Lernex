@@ -4,11 +4,10 @@ from fastapi import APIRouter, HTTPException, Depends
 
 from ..domain.learning_record import LearningRecord
 from ..domain.user import Learner
+from ..storage import _records
 from .auth_router import get_current_learner     
 
 router = APIRouter(prefix="/learning-records", tags=["Learning Records"])
-
-_records: Dict[str, LearningRecord] = {}
 
 
 @router.post("/", response_model=LearningRecord)

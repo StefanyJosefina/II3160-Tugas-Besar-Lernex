@@ -5,10 +5,9 @@ from pydantic import BaseModel, EmailStr
 from passlib.context import CryptContext
 
 from ..domain.user import Learner
+from ..storage import _learners
 
 router = APIRouter(prefix="/learners", tags=["Learners"])
-
-_learners: Dict[str, Learner] = {}
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

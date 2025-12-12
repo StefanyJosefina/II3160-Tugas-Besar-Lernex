@@ -4,11 +4,10 @@ from fastapi import APIRouter, HTTPException, Depends
 
 from ..domain.feedback import Feedback
 from ..domain.user import Learner
+from ..storage import _feedback_store
 from .auth_router import get_current_learner   
 
 router = APIRouter(prefix="/feedback", tags=["Feedback"])
-
-_feedback_store: Dict[str, Feedback] = {}
 
 
 @router.post("/", response_model=Feedback)
