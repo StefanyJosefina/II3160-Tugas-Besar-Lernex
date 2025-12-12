@@ -391,11 +391,11 @@ pytest --cov=app --cov-report=html
 
 ```
 tests/
-├── test_auth.py           # Authentication tests
-├── test_courses.py        # Course management tests
-├── test_enrollment.py     # Enrollment tests
-├── test_feedback.py       # Feedback tests
-└── test_progress.py       # Progress tracking tests
+├── test_auth.py          
+├── test_courses.py      
+├── test_enrollment.py  
+├── test_feedback.py       
+└── test_progress.py      
 ```
 
 ---
