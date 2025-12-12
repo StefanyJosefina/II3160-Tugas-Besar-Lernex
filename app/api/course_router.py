@@ -65,50 +65,6 @@ def list_courses(
         )
     return courses
 
-
-@router.get("/{course_id}", response_model=Course)
-def get_course_detail(
-    course_id: str,
-    current_learner: Learner = Depends(get_current_learner)
-) -> Course:
-    """Get detailed course structure including all modules, lessons, and topics"""
-    course = _courses.get(course_id)
-    if not course:
-        raise HTTPException(status_code=404, detail="Course not found")
-    return course
-
-
-@router.post("/{course_id}/enroll", response_model=EnrollResponse)
-def enroll_course(
-    course_id: str,
-    current_learner: Learner = Depends(get_current_learner)
-) -> EnrollResponse:
-    """Enroll learner to a course"""
-    course = _courses.get(course_id)
-    if not course:
-        raise HTTPException(status_code=404, detail="Course not found")
-    
-    # Check if already enrolled
-    enrollment_id = f"{current_learner.learner_id}-{course_id}"
-    if enrollment_id in _enrollments:
-        raise HTTPException(status_code=400, detail="Already enrolled in this course")
-    
-    # Create enrollment
-    _enrollments[enrollment_id] = {
-        "enrollment_id": enrollment_id,
-        "learner_id": current_learner.learner_id,
-        "course_id": course_id,
-        "enrolled_at": str(__import__('datetime').datetime.utcnow())
-    }
-    
-    return EnrollResponse(
-        message="Successfully enrolled in course",
-        enrollment_id=enrollment_id,
-        course_id=course_id,
-        learner_id=current_learner.learner_id
-    )
-
-
 @router.get("/my-courses", response_model=List[EnrolledCourseResponse])
 def get_my_courses(
     current_learner: Learner = Depends(get_current_learner)
@@ -138,3 +94,44 @@ def get_my_courses(
                 )
     
     return my_courses
+
+
+@router.get("/{course_id}", response_model=Course)
+def get_course_detail(
+    course_id: str,
+    current_learner: Learner = Depends(get_current_learner)
+) -> Course:
+    """Get detailed course structure including all modules, lessons, and topics"""
+    course = _courses.get(course_id)
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+    return course
+
+
+@router.post("/{course_id}/enroll", response_model=EnrollResponse)
+def enroll_course(
+    course_id: str,
+    current_learner: Learner = Depends(get_current_learner)
+) -> EnrollResponse:
+    """Enroll learner to a course"""
+    course = _courses.get(course_id)
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    enrollment_id = f"{current_learner.learner_id}-{course_id}"
+    if enrollment_id in _enrollments:
+        raise HTTPException(status_code=400, detail="Already enrolled in this course")
+    
+    _enrollments[enrollment_id] = {
+        "enrollment_id": enrollment_id,
+        "learner_id": current_learner.learner_id,
+        "course_id": course_id,
+        "enrolled_at": str(__import__('datetime').datetime.utcnow())
+    }
+    
+    return EnrollResponse(
+        message="Successfully enrolled in course",
+        enrollment_id=enrollment_id,
+        course_id=course_id,
+        learner_id=current_learner.learner_id
+    )
